@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Apna Deal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0B0C;
+    --gray-900:#1A1A1C;
+    --gray-600:#6B6B70;
+    --gray-400:#9C9CA1;
+    --gray-200:#E7E7E9;
+    --gray-100:#F2F2F3;
+    --white:#FFFFFF;
+    --accent-blue:#5B6EF5;
+    --accent-green:#2FA36B;
+    --accent-red:#E5573F;
+    --accent-purple:#8A5CF6;
+    --accent-amber:#D98E04;
+    --radius-lg:26px;
+    --radius-md:16px;
+    --radius-sm:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background:#EDEDEF;
+    color:var(--ink);
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding: 30px 16px;
+  }
+
+  .phone{
+    width: 375px;
+    height: 812px;
+    background: var(--white);
+    border-radius: 46px;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.22), 0 0 0 10px #0B0B0C;
+    position: relative;
+    overflow: hidden;
+    display:flex; flex-direction:column;
+  }
+  .status-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 26px 6px;
+    font-size:15px; font-weight:600; flex-shrink:0;
+  }
+  .status-icons{display:flex; align-items:center; gap:5px;}
+  .status-icons svg{display:block;}
+
+  .app-screen{
+    flex:1; display:none; flex-direction:column; overflow:hidden; position:relative;
+  }
+  .app-screen.active{display:flex;}
+  .scroll-area{flex:1; overflow-y:auto; padding: 0 22px 100px;}
+  .scroll-area::-webkit-scrollbar{display:none;}
+
+  .bg-blobs{position:relative;}
+  .bg-blobs::before{
+    content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(circle at 15% 12%, rgba(217,142,4,0.16), transparent 32%),
+      radial-gradient(circle at 85% 30%, rgba(91,110,245,0.14), transparent 30%),
+      radial-gradient(circle at 30% 85%, rgba(47,163,107,0.12), transparent 30%);
+  }
+  .bg-rings{position:relative;}
+  .bg-rings svg{position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:0.5;}
+
+  .eyebrow{ font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-400); margin: 4px 0 4px;}
+  h1.page-title{ font-family:'Inter'; font-size:26px; font-weight:800; margin:0 0 14px; letter-spacing:-0.01em;}
+
+  .pill-btn{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%; padding:15px 18px; border-radius:999px; border:none;
+    font-size:14.5px; font-weight:600; font-family:inherit; cursor:pointer;
+    transition: opacity .15s ease, transform .12s ease;
+  }
+  .pill-btn:active{transform:scale(0.98);}
+  .pill-black{ background:var(--ink); color:var(--white);}
+  .pill-black:hover{opacity:0.88;}
+  .pill-outline{ background:var(--white); color:var(--ink); border:1.5px solid var(--gray-200);}
+  .pill-outline:hover{border-color:var(--ink);}
+  .pill-small{ padding:9px 16px; font-size:12.5px; width:auto;}
+  .pill-locked{background:var(--gray-100); color:var(--gray-400); cursor:not-allowed;}
+
+  #screen-auth .scroll-area{ padding: 8px 26px 40px; display:flex; flex-direction:column; height:100%;}
+  .logo-row{ display:flex; align-items:center; gap:8px; margin-top:6px;}
+  .logo-mark{
+    width:34px; height:34px; border-radius:50%;
+    border: 2px solid var(--ink); display:flex; align-items:center; justify-content:center;
+  }
+  .logo-mark .dot{width:8px; height:8px; border-radius:50%; background:var(--ink);}
+  .logo-label{ font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gray-400); font-weight:700; margin-top:26px;}
+  .auth-headline{ font-size:32px; font-weight:800; line-height:1.15; letter-spacing:-0.015em; margin:6px 0 10px;}
+  .auth-sub{ font-size:14px; color:var(--gray-600); line-height:1.55; max-width:280px; margin-bottom:auto;}
+  .auth-buttons{ display:flex; flex-direction:column; gap:10px; margin-top:22px;}
+  .icon-btn{width:18px; text-align:center;}
+  .legal{ font-size:10.5px; color:var(--gray-400); text-align:center; margin-top:14px;}
+
+  .home-top{ padding: 16px 22px 6px; flex-shrink:0;}
+  .home-top-row{display:flex; align-items:center; justify-content:space-between;}
+  .home-top-row h1{margin:0;}
+  .post-fab{
+    display:flex; align-items:center; gap:6px;
+    background:var(--ink); color:var(--white); border:none; border-radius:999px;
+    padding:9px 15px; font-size:12.5px; font-weight:700;
+  }
+  .segment{
+    display:flex; background:var(--gray-100); border-radius:999px; padding:4px; margin: 14px 0 10px;
+  }
+  .segment button{
+    flex:1; border:none; background:none; padding:9px 0; border-radius:999px;
+    font-size:13px; font-weight:700; color:var(--gray-600); font-family:inherit;
+  }
+  .segment button.active{ background:var(--ink); color:var(--white);}
+  .meta-line{ font-size:11.5px; color:var(--gray-400); font-weight:600; margin: 2px 0 12px; text-transform:uppercase; letter-spacing:0.04em;}
+
+  .filter-scroll{ display:flex; gap:8px; overflow-x:auto; padding-bottom:12px; margin: 0 -22px 4px; padding-left:22px; padding-right:22px;}
+  .filter-scroll::-webkit-scrollbar{display:none;}
+  .chip{ flex-shrink:0; padding:7px 14px; border-radius:999px; background:var(--gray-100); font-size:12.5px; font-weight:600; color:var(--gray-600); white-space:nowrap; border:none; font-family:inherit; cursor:pointer;}
+  .chip.active{background:var(--ink); color:var(--white);}
+  .chip.verified.active{background:#E4F4EA; color:var(--accent-green);}
+
+  .listing-row{
+    display:flex; align-items:center; gap:13px;
+    padding: 14px 0; border-bottom:1px solid var(--gray-100);
+  }
+  .l-icon{
+    width:46px; height:46px; border-radius:13px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--white); font-weight:700;
+  }
+  .l-body{flex:1; min-width:0;}
+  .l-body h4{margin:0 0 2px; font-size:14.5px; font-weight:700; letter-spacing:-0.005em;}
+  .l-body p{margin:0; font-size:12px; color:var(--gray-400);}
+  .l-body .badges{display:flex; gap:5px; margin-top:5px;}
+  .mini-badge{font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:2px 6px; border-radius:5px; background:var(--gray-100); color:var(--gray-600);}
+  .mini-badge.verified{background:#E4F4EA; color:var(--accent-green);}
+  .l-right{display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0;}
+  .l-price{font-size:13px; font-weight:800; color:var(--ink); white-space:nowrap;}
+
+  .fee-strip{
+    background:var(--ink); color:var(--white); border-radius:var(--radius-md);
+    padding:16px 18px; margin: 4px 0 18px;
+  }
+  .fee-strip .ft{font-size:12px; font-weight:700; color:var(--gray-400); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;}
+  .fee-strip .frow{display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px dashed #333;}
+  .fee-strip .frow:last-child{border-bottom:none;}
+  .fee-strip .frow.new span:last-child{color:var(--accent-amber); font-weight:800;}
+  .fee-strip .frow.old span:last-child{color:#8A8A8E; text-decoration:line-through;}
+
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:11.5px; font-weight:700; color:var(--gray-600); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.03em;}
+  .field input, .field select, .field textarea{
+    width:100%; padding:12px 14px; font-size:14px; border-radius:12px; border:1.5px solid var(--gray-200);
+    font-family:inherit; background:var(--gray-100);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--ink); background:var(--white);}
+  .field textarea{min-height:80px; resize:vertical;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+
+  .my-listing-card{
+    border:1.5px solid var(--gray-100); border-radius:var(--radius-md); padding:14px; margin-bottom:12px;
+    display:flex; gap:12px; align-items:center;
+  }
+
+  .profile-hero{ text-align:center; padding-top:10px;}
+  .avatar-lg{
+    width:78px; height:78px; border-radius:50%; background:var(--ink); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800;
+    margin: 6px auto 12px;
+  }
+  .profile-hero h2{margin:0; font-size:19px; font-weight:800;}
+  .profile-hero p{margin:4px 0 0; font-size:12.5px; color:var(--gray-400);}
+  .stats-row{ display:flex; gap:10px; margin: 20px 0 22px;}
+  .stat-box{ flex:1; text-align:center; border:1.5px solid var(--gray-100); border-radius:var(--radius-md); padding:14px 0;}
+  .stat-box .sn{ font-size:19px; font-weight:800;}
+  .stat-box .sl{ font-size:10px; color:var(--gray-400); text-transform:uppercase; font-weight:700; letter-spacing:0.04em; margin-top:2px;}
+  .account-list{border-top:1px solid var(--gray-100);}
+  .account-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:15px 2px; border-bottom:1px solid var(--gray-100); font-size:14px; font-weight:600;
+  }
+  .account-row .chev{color:var(--gray-400);}
+  .verify-banner{
+    background: linear-gradient(135deg, #FCF1D9, #FBEADD); border-radius:var(--radius-md);
+    padding:14px 16px; margin: 4px 0 20px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .verify-banner .vt{font-size:12.5px; font-weight:700;}
+  .verify-banner .vs{font-size:11px; color:var(--gray-600); margin-top:2px;}
+
+  #screen-saved .scroll-area{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; height:100%; padding: 0 40px;}
+  .empty-icon{
+    width:64px; height:64px; border-radius:50%; border:2px solid var(--gray-200);
+    display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:18px;
+  }
+  #screen-saved h3{font-size:17px; font-weight:800; margin:0 0 6px;}
+  #screen-saved p{font-size:13px; color:var(--gray-400); line-height:1.5; margin:0 0 20px;}
+
+  .tabbar{
+    position:absolute; bottom:0; left:0; right:0;
+    display:flex; justify-content:space-around; align-items:center;
+    padding: 10px 10px 26px; background:var(--white); border-top:1px solid var(--gray-100); z-index:5;
+  }
+  .tab-item{
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    background:none; border:none; font-family:inherit; color:var(--gray-400); font-size:10px; font-weight:600; cursor:pointer;
+  }
+  .tab-item.active{color:var(--ink);}
+  .tab-item svg{stroke:currentColor;}
+
+  .sheet-overlay{
+    position:absolute; inset:0; background:rgba(11,11,12,0.45); display:none; align-items:flex-end; z-index:50;
+  }
+  .sheet-overlay.show{display:flex;}
+  .sheet{
+    background:var(--white); width:100%; border-radius:28px 28px 0 0; padding:22px 22px 34px;
+    animation: slideUp .25s ease;
+  }
+  @keyframes slideUp{ from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+  .sheet-handle{ width:36px; height:4px; background:var(--gray-200); border-radius:99px; margin:0 auto 16px;}
+  .sheet h3{ font-size:19px; font-weight:800; margin:0 0 6px;}
+  .sheet p.desc{ font-size:13px; color:var(--gray-600); line-height:1.5; margin:0 0 18px;}
+  .progress-track{ height:7px; background:var(--gray-100); border-radius:99px; overflow:hidden; margin-bottom:18px;}
+  .progress-fill{ height:100%; background:var(--ink); width:35%; transition:width .3s ease;}
+
+  .toast{
+    position:absolute; bottom:110px; left:22px; right:22px;
+    background:var(--ink); color:var(--white); padding:13px 16px; border-radius:14px;
+    font-size:12.5px; font-weight:600; text-align:center;
+    opacity:0; transform:translateY(10px); pointer-events:none; transition:all .25s ease; z-index:60;
+  }
+  .toast.show{opacity:1; transform:translateY(0);}
+
+  @media (max-width:420px){
+    body{padding:0;}
+    .phone{ width:100vw; height:100vh; border-radius:0; box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="0.5" fill="#0B0B0C"/><rect x="5" y="5" width="3" height="7" rx="0.5" fill="#0B0B0C"/><rect x="10" y="2" width="3" height="10" rx="0.5" fill="#0B0B0C"/><rect x="15" y="0" width="3" height="12" rx="0.5" fill="#0B0B0C"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2C11 2 13.5 3.3 15 5.2L13.6 6.6C12.4 5.1 10.3 4 8 4C5.7 4 3.6 5.1 2.4 6.6L1 5.2C2.5 3.3 5 2 8 2Z" fill="#0B0B0C"/><circle cx="8" cy="9.5" r="1.6" fill="#0B0B0C"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="#0B0B0C" fill="none"/><rect x="2" y="2" width="17" height="8" rx="1.5" fill="#0B0B0C"/><rect x="22.5" y="4" width="1.5" height="4" rx="0.7" fill="#0B0B0C"/></svg>
+    </div>
+  </div>
+
+  <div id="screen-auth" class="app-screen active bg-blobs">
+    <div class="scroll-area" style="position:relative; z-index:1;">
+      <div class="logo-row">
+        <div class="logo-mark"><div class="dot"></div></div>
+      </div>
+      <div class="logo-label">Apna Deal</div>
+      <div class="auth-headline">Buy, sell &amp; lease desi-owned businesses.</div>
+      <div class="auth-sub">Motels, gas stations, restaurants, apartments &amp; Airbnbs — listed by verified owners in the community, no broker fee.</div>
+      <div class="auth-buttons">
+        <button class="pill-btn pill-black" onclick="handleLogin()"><span class="icon-btn">🟢</span> Continue with Google</button>
+        <button class="pill-btn pill-outline" onclick="handleLogin()"><span class="icon-btn">📱</span> Continue with phone</button>
+        <button class="pill-btn pill-outline" onclick="handleLogin()"><span class="icon-btn">✉️</span> Continue with email</button>
+      </div>
+      <div class="legal">By continuing you agree to Apna Deal's Terms &amp; Privacy.</div>
+    </div>
+  </div>
+
+  <div id="screen-home" class="app-screen">
+    <div class="home-top">
+      <div class="home-top-row">
+        <div>
+          <div class="eyebrow">Marketplace</div>
+          <h1 class="page-title">Listings</h1>
+        </div>
+        <button class="post-fab" onclick="switchTab('sell')">+ Post</button>
+      </div>
+      <div class="segment">
+        <button class="active" onclick="setMode(this,'buy')">Buy</button>
+        <button onclick="setMode(this,'lease')">Lease</button>
+      </div>
+      <div class="meta-line" id="metaLine">24 LISTINGS · 6 TYPES</div>
+      <div class="filter-scroll" id="filterScroll"></div>
+    </div>
+    <div class="scroll-area" style="padding-top:2px;" id="listingList"></div>
+  </div>
+
+  <div id="screen-sell" class="app-screen">
+    <div class="home-top">
+      <div class="eyebrow">Owner</div>
+      <h1 class="page-title">Sell a listing</h1>
+    </div>
+    <div class="scroll-area">
+      <div class="fee-strip">
+        <div class="ft">Why owners switch</div>
+        <div class="frow old"><span>Broker commission (~6%)</span><span>$72,000</span></div>
+        <div class="frow new"><span>Apna Deal listing fee</span><span>$199</span></div>
+      </div>
+      <div class="field"><label>Business type</label>
+        <select>
+          <option>Motel</option><option>Gas station</option><option>Restaurant</option>
+          <option>Apartment building</option><option>Office space</option><option>Airbnb / short-term rental</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field"><label>City, state</label><input placeholder="Katy, TX"/></div>
+        <div class="field"><label>Asking price</label><input placeholder="$1,250,000"/></div>
+      </div>
+      <div class="field"><label>Description</label><textarea placeholder="Rooms, revenue, lease terms..."></textarea></div>
+      <div class="field"><label>Phone number</label><input placeholder="(xxx) xxx-xxxx"/></div>
+      <button class="pill-btn pill-black" onclick="showToast('Listing submitted — it goes live once your profile is verified.')">Submit for $199</button>
+      <div style="margin-top:26px;">
+        <div class="eyebrow" style="margin-bottom:10px;">Your listings</div>
+        <div class="my-listing-card">
+          <div class="l-icon" style="background:#D98E04;">🏨</div>
+          <div class="l-body"><h4>42-Room Highway Motel</h4><p>Katy, TX · $1,250,000</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-saved" class="app-screen bg-rings">
+    <svg viewBox="0 0 375 812" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="187" cy="380" r="90" stroke="#E7E7E9" stroke-width="1" fill="none"/>
+      <circle cx="187" cy="380" r="140" stroke="#E7E7E9" stroke-width="1" fill="none"/>
+      <circle cx="187" cy="380" r="190" stroke="#E7E7E9" stroke-width="1" fill="none"/>
+      <circle cx="187" cy="380" r="240" stroke="#E7E7E9" stroke-width="1" fill="none"/>
+    </svg>
+    <div class="scroll-area" style="position:relative; z-index:1;">
+      <div class="empty-icon">🔖</div>
+      <h3>No saved listings yet</h3>
+      <p>Businesses you save while browsing Buy or Lease will show up here.</p>
+      <button class="pill-btn pill-black" style="width:auto; padding:12px 22px;" onclick="switchTab('home')">Browse listings</button>
+    </div>
+  </div>
+
+  <div id="screen-profile" class="app-screen">
+    <div class="scroll-area" style="padding-top:20px;">
+      <div class="eyebrow" style="text-align:center;">Your account</div>
+      <div class="profile-hero">
+        <div class="avatar-lg">A</div>
+        <h2>Ashok Patel</h2>
+        <p>Motel &amp; gas station owner · Houston, TX</p>
+      </div>
+      <div class="verify-banner" id="verifyBanner">
+        <div>
+          <div class="vt">Profile 35% complete</div>
+          <div class="vs">Finish to unlock contact details</div>
+        </div>
+        <button class="pill-btn pill-black pill-small" onclick="openSheet()">Finish</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="sn">1</div><div class="sl">Listed</div></div>
+        <div class="stat-box"><div class="sn">0</div><div class="sl">Saved</div></div>
+        <div class="stat-box"><div class="sn">0</div><div class="sl">Deals</div></div>
+      </div>
+      <div class="account-list">
+        <div class="account-row"><span>Edit profile</span><span class="chev">›</span></div>
+        <div class="account-row"><span>Saved businesses</span><span class="chev">›</span></div>
+        <div class="account-row"><span>Notifications</span><span class="chev">›</span></div>
+        <div class="account-row"><span>Help &amp; support</span><span class="chev">›</span></div>
+      </div>
+      <button class="pill-btn pill-outline" style="margin-top:22px;" onclick="switchTab('auth')">Sign out</button>
+    </div>
+  </div>
+
+  <div class="tabbar" id="tabbar" style="display:none;">
+    <button class="tab-item active" data-tab="home" onclick="switchTab('home')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      Home
+    </button>
+    <button class="tab-item" data-tab="sell" onclick="switchTab('sell')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      Sell
+    </button>
+    <button class="tab-item" data-tab="saved" onclick="switchTab('saved')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      Saved
+    </button>
+    <button class="tab-item" data-tab="profile" onclick="switchTab('profile')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 6-6 8-6s6.5 2 8 6"/></svg>
+      Profile
+    </button>
+  </div>
+
+  <div class="sheet-overlay" id="sheetOverlay" onclick="if(event.target===this)closeSheet()">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h3>Complete your profile</h3>
+      <p class="desc">Contacts only appear once both buyer and seller profiles are fully filled out — keeps the network verified.</p>
+      <div class="progress-track"><div class="progress-fill" id="sheetProgress"></div></div>
+      <div class="field"><label>Full name</label><input placeholder="Ashok Patel"/></div>
+      <div class="field"><label>Phone number</label><input placeholder="(xxx) xxx-xxxx"/></div>
+      <button class="pill-btn pill-black" onclick="completeProfile()">Save &amp; unlock contacts</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+let profileComplete = false;
+let mode = 'buy';
+
+const TYPES = {
+  motel:{icon:'🏨', color:'#D98E04', label:'Motel'},
+  gas:{icon:'⛽', color:'#2FA36B', label:'Gas Station'},
+  restaurant:{icon:'🍽️', color:'#E5573F', label:'Restaurant'},
+  apartment:{icon:'🏢', color:'#5B6EF5', label:'Apartments'},
+  office:{icon:'🏬', color:'#8A5CF6', label:'Office'},
+  airbnb:{icon:'🏡', color:'#D8558E', label:'Airbnb'},
+};
+
+const BUY = [
+  {type:'motel', name:'42-Room Highway Motel', loc:'Katy, TX', price:'$1,250,000', verified:true},
+  {type:'gas', name:'Corner Gas & Convenience', loc:'Edison, NJ', price:'$980,000', verified:true},
+  {type:'restaurant', name:'Family Indian Restaurant', loc:'Fremont, CA', price:'$310,000', verified:true},
+  {type:'apartment', name:'12-Unit Apartment Complex', loc:'Lawrenceville, GA', price:'$1,650,000', verified:false},
+  {type:'airbnb', name:'3-Property Airbnb Portfolio', loc:'Orlando, FL', price:'$740,000', verified:true},
+  {type:'gas', name:'Interstate Fuel & Mart', loc:'Naperville, IL', price:'$1,100,000', verified:true},
+];
+const LEASE = [
+  {type:'office', name:'Downtown Office Suite', loc:'Sugar Land, TX', price:'$3,200/mo', verified:true},
+  {type:'apartment', name:'2BR Apartment Unit', loc:'Iselin, NJ', price:'$2,100/mo', verified:true},
+  {type:'office', name:'Retail Storefront', loc:'Milpitas, CA', price:'$4,500/mo', verified:false},
+  {type:'apartment', name:'Studio Rental Unit', loc:'Duluth, GA', price:'$1,450/mo', verified:true},
+];
+
+function handleLogin(){ switchTab('home'); document.getElementById('tabbar').style.display='flex'; }
+
+function switchTab(tab){
+  document.querySelectorAll('.app-screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+tab).classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  if(tab==='home') renderList();
+  if(tab==='auth') document.getElementById('tabbar').style.display='none';
+}
+
+function setMode(btn, m){
+  document.querySelectorAll('.segment button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  mode = m;
+  renderFilters();
+  renderList();
+}
+
+function renderFilters(){
+  const source = mode==='buy'? BUY : LEASE;
+  const types = ['all', ...new Set(source.map(l=>l.type)), 'verified'];
+  document.getElementById('filterScroll').innerHTML = types.map((t,i)=>{
+    let label = 'All types';
+    if (t === 'verified') label = 'Verified';
+    else if (t !== 'all') label = TYPES[t].label;
+    const cls = t === 'verified' ? 'chip verified' : 'chip';
+    return `<button class="${cls} ${i===0?'active':''}" onclick="filterChip(this,'${t}')">${label}</button>`;
+  }).join('');
+  document.getElementById('metaLine').textContent = `${source.length} LISTINGS · ${types.length-2} TYPES`;
+}
+
+function filterChip(btn, t){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  const source = mode==='buy'? BUY : LEASE;
+  if (t === 'all') renderList(source);
+  else if (t === 'verified') renderList(source.filter(l => l.verified));
+  else renderList(source.filter(l => l.type === t));
+}
+
+function renderList(items){
+  const source = items || (mode==='buy'? BUY : LEASE);
+  const list = document.getElementById('listingList');
+  list.innerHTML = source.map(item=>{
+    const t = TYPES[item.type];
+    const cta = profileComplete
+      ? `<button class="pill-btn pill-black pill-small" onclick="showToast('Contact revealed — owner notified.')">Contact</button>`
+      : `<button class="pill-btn pill-locked pill-small" onclick="openSheet()">🔒 Locked</button>`;
+    return `
+    <div class="listing-row">
+      <div class="l-icon" style="background:${t.color};">${t.icon}</div>
+      <div class="l-body">
+        <h4>${item.name}</h4>
+        <p>${item.loc}</p>
+        <div class="badges">
+          <span class="mini-badge">${t.label}</span>
+          ${item.verified?'<span class="mini-badge verified">Verified</span>':''}
+        </div>
+      </div>
+      <div class="l-right">
+        <div class="l-price">${item.price}</div>
+        ${cta}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openSheet(){ document.getElementById('sheetOverlay').classList.add('show'); }
+function closeSheet(){ document.getElementById('sheetOverlay').classList.remove('show'); }
+function completeProfile(){
+  profileComplete = true;
+  document.getElementById('sheetProgress').style.width='100%';
+  document.getElementById('verifyBanner').innerHTML = `<div><div class="vt">Profile complete ✓</div><div class="vs">Contacts unlocked on every listing</div></div>`;
+  setTimeout(()=>{
+    closeSheet();
+    showToast('Profile complete — contacts unlocked.');
+    renderList();
+  },350);
+}
+
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+renderFilters();
+renderList();
+</script>
+</body>
+</html>
