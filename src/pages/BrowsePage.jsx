@@ -58,7 +58,7 @@ export default function BrowsePage() {
   const { eyebrow, title } = headerLabels[listType];
 
   return (
-    <MobileShell bg={listType === 'buy' ? 'bg-dots' : 'bg-emoji'}>
+    <MobileShell>
       <div className="page-header">
         <div className="page-header-left">
           <div className="eyebrow">{eyebrow}</div>

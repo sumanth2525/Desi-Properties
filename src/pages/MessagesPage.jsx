@@ -9,7 +9,7 @@ export default function MessagesPage() {
   const inquiries = getInquiries().filter((i) => i.buyerId === user?.id);
 
   return (
-    <MobileShell bg="bg-rings">
+    <MobileShell>
       <div className="page-header">
         <div className="page-header-left">
           <div className="eyebrow">YOUR MESSAGES</div>

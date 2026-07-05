@@ -48,7 +48,7 @@ export default function LoginPage() {
   };
 
   return (
-    <MobileShell bg="bg-blobs" showNav={false}>
+    <MobileShell showNav={false}>
       <div className="login-page">
         <div className="login-brand">
           <div className="brand-logo">

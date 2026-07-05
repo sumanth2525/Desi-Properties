@@ -21,7 +21,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <MobileShell bg="bg-doodle">
+    <MobileShell>
       <div className="page-header">
         <div className="page-header-left">
           <div className="eyebrow">YOUR ACCOUNT</div>

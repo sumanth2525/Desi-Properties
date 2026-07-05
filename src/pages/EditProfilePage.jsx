@@ -26,7 +26,7 @@ export default function EditProfilePage() {
   };
 
   return (
-    <MobileShell bg="bg-doodle" showNav={false}>
+    <MobileShell showNav={false}>
       <form className="form-page" onSubmit={handleSave}>
         <button type="button" className="back-btn" onClick={() => navigate('/profile')}>
           ← Back

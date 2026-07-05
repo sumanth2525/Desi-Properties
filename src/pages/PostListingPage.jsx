@@ -54,7 +54,7 @@ export default function PostListingPage() {
   };
 
   return (
-    <MobileShell bg="bg-emoji" showNav={false}>
+    <MobileShell bg="bg-plain" showNav={false}>
       <form className="form-page" onSubmit={handleSubmit}>
         <button type="button" className="back-btn" onClick={() => navigate('/browse')}>
           ← Back

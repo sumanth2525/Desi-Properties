@@ -9,7 +9,7 @@ export default function SavedPage() {
   const listings = getListings().filter((l) => savedIds.includes(l.id));
 
   return (
-    <MobileShell bg="bg-dots" showNav={false}>
+    <MobileShell showNav={false}>
       <div className="page-header">
         <button type="button" className="back-btn" onClick={() => navigate('/profile')}>
           ← Back

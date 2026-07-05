@@ -24,7 +24,7 @@ export default function ListingDetailPage() {
 
   if (!listing) {
     return (
-      <MobileShell bg="bg-dots" showNav={false}>
+      <MobileShell showNav={false}>
         <div className="empty-state">
           <div className="empty-title">Listing not found</div>
           <button type="button" className="btn btn-primary btn-sm" onClick={() => navigate('/browse')}>
@@ -65,7 +65,7 @@ export default function ListingDetailPage() {
   };
 
   return (
-    <MobileShell bg="bg-dots" showNav={false}>
+    <MobileShell showNav={false}>
       <div className="detail-page">
         <div className="detail-hero">
           <button type="button" className="back-btn" onClick={() => navigate(-1)}>
